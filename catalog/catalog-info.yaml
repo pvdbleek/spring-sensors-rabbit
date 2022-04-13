@@ -14,12 +14,3 @@ spec:
   type: service
   lifecycle: experimental
   owner: default-team
-apiVersion: backstage.io/v1alpha1
-kind: Domain
-metadata:
-  name: demo-domain
-  description: Demo Domain for Tanzu Application Platform
-  annotations:
-    'backstage.io/techdocs-ref': dir:.
-spec:
-  owner: demo-team
