@@ -21,7 +21,7 @@ public class SensorsDataSink {
     @Bean
     public Consumer<SensorData> receiveSensorData() {
         return sensorData -> {
-            log.info("Received sensor data: {}", sensorData);
+            log.info("Receivedsensor data: {}", sensorData);
             sensorRepository.save(sensorData);
         };
     }
