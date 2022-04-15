@@ -1,0 +1,50 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: spring-sensors-rabbit
+  labels:
+    app.kubernetes.io/part-of: spring-sensors-rabbit
+    apps.tanzu.vmware.com/has-tests: "true"
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/component: run
+    carto.run/workload-name: spring-sensors-rabbit
+spec:
+  template:
+    metadata:
+      annotations:
+        boot.spring.io/actuator: http://:8081/actuator
+        boot.spring.io/version: 2.5.8
+        conventions.apps.tanzu.vmware.com/applied-conventions: |-
+          spring-boot-convention/spring-boot
+          spring-boot-convention/spring-boot-graceful-shutdown
+          spring-boot-convention/spring-boot-web
+          spring-boot-convention/spring-boot-actuator
+          spring-boot-convention/service-intent-mysql
+          spring-boot-convention/service-intent-rabbitmq
+        developer.conventions/target-containers: workload
+        services.conventions.apps.tanzu.vmware.com/mysql: mysql-connector-java/8.0.27
+        services.conventions.apps.tanzu.vmware.com/rabbitmq: amqp-client/5.12.0
+      labels:
+        app.kubernetes.io/component: run
+        app.kubernetes.io/part-of: spring-sensors-rabbit
+        apps.tanzu.vmware.com/has-tests: "true"
+        apps.tanzu.vmware.com/workload-type: web
+        carto.run/workload-name: spring-sensors-rabbit
+        conventions.apps.tanzu.vmware.com/framework: spring-boot
+        services.conventions.apps.tanzu.vmware.com/mysql: workload
+        services.conventions.apps.tanzu.vmware.com/rabbitmq: workload
+    spec:
+      containers:
+      - env:
+        - name: JAVA_TOOL_OPTIONS
+          value: -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.endpoints.web.base-path="/actuator" -Dmanagement.health.probes.enabled="true" -Dmanagement.server.port="8081" -Dserver.port="8080" -Dserver.shutdown.grace-period="24s"
+        image: registry.harbor.t3u.link/tap-project/supply-chain/spring-sensors-rabbit-default@sha256:6220ba9557e3ad12344f42a348e00327dd4a118e4a61c94b88ca1b78968e2189
+        name: workload
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        securityContext:
+          runAsUser: 1000
+      serviceAccountName: default
+
